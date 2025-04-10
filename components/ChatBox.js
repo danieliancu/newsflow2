@@ -1,12 +1,10 @@
-// components/ChatBox.js
 // pages/api/ask.js
 // pages/chat.js
-
-
+// components/ChatBox.js
 import { useState, useEffect } from "react";
 
 export default function ChatBox() {
-  // State pentru articolele preluate din API
+  // State pentru articolele complete preluate din API
   const [articles, setArticles] = useState([]);
   // Dropdown pentru publicații unice
   const [sources, setSources] = useState([]);
@@ -28,7 +26,7 @@ export default function ChatBox() {
     { value: "3", label: "Acum trei ore" },
   ];
 
-  // Preluăm articolele din API la montarea componentei
+  // Preluăm articolele complete din API la montarea componentei pentru popularea dropdown-urilor
   useEffect(() => {
     fetch("/api/articles")
       .then((res) => res.json())
@@ -66,6 +64,23 @@ export default function ChatBox() {
     }
   }, [selectedSource, articles, selectedLabel]);
 
+  // Preluăm articolele filtrate din API folosind endpoint-ul articlesFiltered
+  useEffect(() => {
+    if (!selectedSource || !selectedLabel || !selectedHours) return;
+    
+    const url = `/api/articlesFiltered?source=${selectedSource}&label=${selectedLabel}&hours=${selectedHours}`;
+    
+    fetch(url)
+      .then((res) => res.json())
+      .then((data) => {
+        // Aici poți lucra cu articolele filtrate. De exemplu, le poți salva într-un state
+        console.log("Articole filtrate:", data.data);
+      })
+      .catch((err) => {
+        console.error("Eroare la preluarea articolelor filtrate:", err);
+      });
+  }, [selectedSource, selectedLabel, selectedHours]);
+
   // Funcția ce construiește promptul și face cererea către /api/ask
   const handleSummarize = async () => {
     if (!selectedSource || !selectedLabel || !selectedHours) return;
@@ -77,38 +92,36 @@ export default function ChatBox() {
     const question = `Rezuma știrile din ${selectedHours} ${
       selectedHours === "1" ? "ultima oră" : "ultimele ore"
     } din Publicația ${selectedSource} la domeniul ${selectedLabel}. 
-    Te rog să extragi doar informațiile cele mai importante, fără a acoperi toate știrile, și să te încadrezi în 1024 tokens.
-    Dacă nu găsești știri relevante, te rog să returnezi mesajul "Din pacate site-ul respectiv nu detine nicio stire conform cu criteriile alese, va rugam sa incercati o alta cautare".`;
-    
+Te rog să extragi doar informațiile cele mai importante, fără a acoperi toate știrile, și să te încadrezi în 1024 tokens.
+Dacă nu găsești știri relevante, te rog să returnezi mesajul "Din pacate site-ul respectiv nu detine nicio stire conform cu criteriile alese, va rugam sa incercati o alta cautare".`;
 
-try {
-  const res = await fetch("/api/ask", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      source: selectedSource,
-      label: selectedLabel,
-      hours: selectedHours,
-      question,
-    }),
-  });
-  const data = await res.json();
+    try {
+      const res = await fetch("/api/ask", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          source: selectedSource,
+          label: selectedLabel,
+          hours: selectedHours,
+          question,
+        }),
+      });
+      const data = await res.json();
 
-  if (res.ok) {
-    // Înlocuim mesajul implicit dacă acesta conține textul nedorit
-    const defaultMessageFragment = "îmi pare rău, dar ca asistent AI, nu am capacitatea";
-    if (data.answer && data.answer.toLowerCase().includes(defaultMessageFragment)) {
-      setAnswer("Din pacate site-ul respectiv nu detine nicio stire conform cu criteriile alese, va rugam sa incercati o alta cautare");
-    } else {
-      setAnswer(data.answer || "Nu am găsit un răspuns.");
+      if (res.ok) {
+        // Înlocuim mesajul implicit dacă acesta conține textul nedorit
+        const defaultMessageFragment = "îmi pare rău, dar ca asistent AI, nu am capacitatea";
+        if (data.answer && data.answer.toLowerCase().includes(defaultMessageFragment)) {
+          setAnswer("Din pacate site-ul respectiv nu detine nicio stire conform cu criteriile alese, va rugam sa incercati o alta cautare");
+        } else {
+          setAnswer(data.answer || "Nu am găsit un răspuns.");
+        }
+      } else {
+        setAnswer(data.error || "Eroare la cerere.");
+      }
+    } catch (err) {
+      setAnswer("Eroare la trimiterea cererii.");
     }
-  } else {
-    setAnswer(data.error || "Eroare la cerere.");
-  }
-} catch (err) {
-  setAnswer("Eroare la trimiterea cererii.");
-}
-
 
     setLoading(false);
   };
@@ -177,14 +190,7 @@ try {
       </button>
 
       {answer && (
-        <div
-          style={{
-            marginTop: 20,
-            background: "#f9f9f9",
-            padding: 15,
-            borderRadius: 8,
-          }}
-        >
+        <div style={{ marginTop: 20, background: "#f9f9f9", padding: 15, borderRadius: 8 }}>
           <strong>Răspuns AI:</strong>
           <p style={{ whiteSpace: "pre-wrap" }}>{answer}</p>
         </div>
