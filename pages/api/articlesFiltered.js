@@ -12,7 +12,7 @@ export default async function handler(req, res) {
   
     try {
       // Dacă ai o variabilă de mediu care indică sursa articolelor, o folosești; altfel, folosește fallback-ul
-      const apiUrl = process.env.API_ARTICLES_URL || "http://localhost:3000/api/articles";
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api/articles";
       const apiResponse = await fetch(apiUrl);
       const data = await apiResponse.json();
       const articles = data.data || [];
