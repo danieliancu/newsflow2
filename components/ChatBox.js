@@ -10,6 +10,8 @@ export default function ChatBox() {
   const [sources, setSources] = useState([]);
   // Dropdown pentru domenii; depinde de publicația aleasă
   const [labels, setLabels] = useState([]);
+  // State pentru articolele filtrate (folosite pentru a decide dacă trimitem cererea)
+  const [filteredArticles, setFilteredArticles] = useState([]);
 
   const [selectedSource, setSelectedSource] = useState("");
   const [selectedLabel, setSelectedLabel] = useState("");
@@ -47,11 +49,11 @@ export default function ChatBox() {
   // Actualizăm lista de etichete (labels) când se schimbă publicația selectată
   useEffect(() => {
     if (selectedSource) {
-      const filteredArticles = articles.filter(
+      const filteredForLabels = articles.filter(
         (article) => article.source === selectedSource
       );
       const uniqueLabels = Array.from(
-        new Set(filteredArticles.map((article) => article.label))
+        new Set(filteredForLabels.map((article) => article.label))
       );
       setLabels(uniqueLabels);
       // Resetăm domeniul dacă acesta nu se regăsește în noile opțiuni
@@ -73,8 +75,8 @@ export default function ChatBox() {
     fetch(url)
       .then((res) => res.json())
       .then((data) => {
-        // Aici poți lucra cu articolele filtrate. De exemplu, le poți salva într-un state
         console.log("Articole filtrate:", data.data);
+        setFilteredArticles(data.data || []);
       })
       .catch((err) => {
         console.error("Eroare la preluarea articolelor filtrate:", err);
@@ -87,6 +89,22 @@ export default function ChatBox() {
 
     setLoading(true);
     setAnswer("");
+
+    // Dacă nu există articole filtrate, nu trimitem cererea la OpenAI,
+    // ci setăm automat mesajul de eroare.
+    if (filteredArticles.length === 0) {
+      const foundTimeOption = timeOptions.find(
+        (option) => option.value === selectedHours
+      );
+      const timeLabel = foundTimeOption
+        ? foundTimeOption.label.toLowerCase()
+        : selectedHours;
+      setAnswer(
+        `Din păcate, site-ul ${selectedSource} nu a publicat nicio știre din domeniul ${selectedLabel} până ${timeLabel}`
+      );
+      setLoading(false);
+      return;
+    }
 
     // Creăm un prompt ce menționează clar ce se dorește
     const question = `Rezuma știrile din ${selectedHours} ${
@@ -109,10 +127,15 @@ Dacă nu găsești știri relevante, te rog să returnezi mesajul "Din pacate si
       const data = await res.json();
 
       if (res.ok) {
-        // Înlocuim mesajul implicit dacă acesta conține textul nedorit
-        const defaultMessageFragment = "îmi pare rău, dar ca asistent AI, nu am capacitatea";
-        if (data.answer && data.answer.toLowerCase().includes(defaultMessageFragment)) {
-          setAnswer("Din pacate site-ul respectiv nu detine nicio stire conform cu criteriile alese, va rugam sa incercati o alta cautare");
+        const defaultMessageFragment =
+          "îmi pare rău, dar ca asistent AI, nu am capacitatea";
+        if (
+          data.answer &&
+          data.answer.toLowerCase().includes(defaultMessageFragment)
+        ) {
+          setAnswer(
+            "Din pacate site-ul respectiv nu detine nicio stire conform cu criteriile alese, va rugam sa incercati o alta cautare"
+          );
         } else {
           setAnswer(data.answer || "Nu am găsit un răspuns.");
         }
