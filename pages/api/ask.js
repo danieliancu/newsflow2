@@ -65,7 +65,7 @@ Răspunde clar, în stil jurnalistic, rezumând doar informațiile relevante.
 
     // Apelăm endpoint-ul de chat completions
     const openAIResponse = await client.chat.completions.create({
-      model: "gpt-4",
+      model: "gpt-3.5-turbo",
       messages: [
         {
           role: "system",
