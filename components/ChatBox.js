@@ -197,12 +197,12 @@ Dacă nu găsești știri relevante, te rog să returnezi mesajul "Din pacate si
       <button
         onClick={handleSummarize}
         disabled={isDisabled}
+        className={isDisabled ? "buttonDisabled" : "buttonEnabled"}
         style={{
-          marginTop: "20px !important",
+          marginTop: "20px",
           width: "100%",
           padding: "10px 20px",
-          backgroundColor: isDisabled ? "gray !important" : "green !important",
-          color: "white !important",
+          color: "white",
           border: "none",
           borderRadius: "4px",
           cursor: isDisabled ? "not-allowed" : "pointer"
@@ -210,6 +210,7 @@ Dacă nu găsești știri relevante, te rog să returnezi mesajul "Din pacate si
       >
         {loading ? "Scriem rezumatul pentru tine..." : buttonText}
       </button>
+
 
       {answer && (
         <div style={{ marginTop: 20, background: "rgb(249, 249, 249)", padding: 15, borderRadius: 8 }}>

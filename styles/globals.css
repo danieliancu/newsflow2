@@ -1599,3 +1599,15 @@ button {
   margin-bottom:12px !important;
   color:grey;
 }
+
+
+
+/* AI style */
+.buttonEnabled {
+  margin-top:20px !important;
+  background-color: green !important;
+}
+.buttonDisabled {
+  margin-top:20px !important;  
+  background-color: gray !important;
+}
