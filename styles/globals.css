@@ -1086,7 +1086,9 @@ button {
   padding: 6px 0;
 }
 
-.login-container {
+.login-container,
+.rezumat
+{
   margin-right:30px !important;
 }
 
@@ -1108,7 +1110,9 @@ button {
   }
 
   .top-left,
-  .login-container {
+  .login-container,
+  .rezumat
+  {
     display: none;
   }
 

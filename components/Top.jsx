@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaUser } from 'react-icons/fa';
+import { FaUser, FaStar } from 'react-icons/fa';
 
 const Top = ({ 
   searchTerm, 
@@ -37,6 +37,12 @@ const Top = ({
       </div>
 
       <div className="top-right">
+        <a href="https://newsflow.ro/chat" className="rezumat" style={{ textDecoration: "none", color: "inherit" }}>
+          <FaStar />{" "}
+          <span>
+            REZUMATUL ZILEI
+          </span>
+        </a>
         <div className="login-container">
           <FaUser />{" "}
           <span>
