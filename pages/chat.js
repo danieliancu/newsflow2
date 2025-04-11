@@ -4,7 +4,7 @@ console.log("ChatBox type:", typeof ChatBox); // trebuie să fie "function"
 export default function Home() {
   return (
     <div>
-      <h1 style={{ textAlign: "center" }}>NewsFlow 🗞️ + AI 🤖</h1>
+      <h1 style={{ textAlign: "center", paddingTop: "20px" }}>Vreau un rezumat!</h1>
       <ChatBox />
     </div>
   );

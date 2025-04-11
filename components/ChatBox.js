@@ -1,5 +1,6 @@
 // pages/api/ask.js
 // pages/chat.js
+// pages/api.articlesFiltered.js
 // components/ChatBox.js
 import { useState, useEffect } from "react";
 
@@ -15,20 +16,15 @@ export default function ChatBox() {
 
   const [selectedSource, setSelectedSource] = useState("");
   const [selectedLabel, setSelectedLabel] = useState("");
-  // Valoarea din dropdown-ul pentru timp (numărul de ore)
-  const [selectedHours, setSelectedHours] = useState("1");
+  // Timpul este fixat implicit la 24 de ore (dropdown-ul pentru timp a fost eliminat)
+  const [selectedHours] = useState("24");
 
   const [answer, setAnswer] = useState("");
   const [loading, setLoading] = useState(false);
+  // Stare nouă pentru a monitoriza fetch-ul articolelor filtrate
+  const [articlesFilteredLoading, setArticlesFilteredLoading] = useState(false);
 
-  // Opțiuni statice pentru timpul relativ (în ore)
-  const timeOptions = [
-    { value: "1", label: "Acum o oră" },
-    { value: "2", label: "Acum două ore" },
-    { value: "3", label: "Acum trei ore" },
-  ];
-
-  // Preluăm articolele complete din API la montarea componentei pentru popularea dropdown-urilor
+  // Preluăm articolele complete din API la montarea componentei
   useEffect(() => {
     fetch("/api/articles")
       .then((res) => res.json())
@@ -36,9 +32,7 @@ export default function ChatBox() {
         const articlesData = data.data || [];
         setArticles(articlesData);
         // Extragem valorile unice pentru "source"
-        const uniqueSources = Array.from(
-          new Set(articlesData.map((article) => article.source))
-        );
+        const uniqueSources = Array.from(new Set(articlesData.map(article => article.source)));
         setSources(uniqueSources);
       })
       .catch((err) => {
@@ -49,14 +43,9 @@ export default function ChatBox() {
   // Actualizăm lista de etichete (labels) când se schimbă publicația selectată
   useEffect(() => {
     if (selectedSource) {
-      const filteredForLabels = articles.filter(
-        (article) => article.source === selectedSource
-      );
-      const uniqueLabels = Array.from(
-        new Set(filteredForLabels.map((article) => article.label))
-      );
+      const filteredForLabels = articles.filter(article => article.source === selectedSource);
+      const uniqueLabels = Array.from(new Set(filteredForLabels.map(article => article.label)));
       setLabels(uniqueLabels);
-      // Resetăm domeniul dacă acesta nu se regăsește în noile opțiuni
       if (!uniqueLabels.includes(selectedLabel)) {
         setSelectedLabel("");
       }
@@ -66,10 +55,17 @@ export default function ChatBox() {
     }
   }, [selectedSource, articles, selectedLabel]);
 
+  // Resetează răspunsul la orice schimbare în dropdown (Publicație sau Domeniu)
+  useEffect(() => {
+    setAnswer("");
+  }, [selectedSource, selectedLabel]);
+
   // Preluăm articolele filtrate din API folosind endpoint-ul articlesFiltered
   useEffect(() => {
-    if (!selectedSource || !selectedLabel || !selectedHours) return;
-    
+    if (!selectedSource || !selectedLabel) return;
+
+    setArticlesFilteredLoading(true);
+
     const url = `/api/articlesFiltered?source=${selectedSource}&label=${selectedLabel}&hours=${selectedHours}`;
     
     fetch(url)
@@ -77,39 +73,28 @@ export default function ChatBox() {
       .then((data) => {
         console.log("Articole filtrate:", data.data);
         setFilteredArticles(data.data || []);
+        setArticlesFilteredLoading(false);
       })
       .catch((err) => {
         console.error("Eroare la preluarea articolelor filtrate:", err);
+        setArticlesFilteredLoading(false);
       });
   }, [selectedSource, selectedLabel, selectedHours]);
 
-  // Funcția ce construiește promptul și face cererea către /api/ask
+  // Funcția care construiește promptul și face cererea către /api/ask
   const handleSummarize = async () => {
-    if (!selectedSource || !selectedLabel || !selectedHours) return;
+    if (!selectedSource || !selectedLabel) return;
 
     setLoading(true);
     setAnswer("");
 
-    // Dacă nu există articole filtrate, nu trimitem cererea la OpenAI,
-    // ci setăm automat mesajul de eroare.
     if (filteredArticles.length === 0) {
-      const foundTimeOption = timeOptions.find(
-        (option) => option.value === selectedHours
-      );
-      const timeLabel = foundTimeOption
-        ? foundTimeOption.label.toLowerCase()
-        : selectedHours;
-      setAnswer(
-        `Din păcate, site-ul ${selectedSource} nu a publicat nicio știre din domeniul ${selectedLabel} până ${timeLabel}`
-      );
+      setAnswer(`Din păcate, site-ul ${selectedSource} nu a publicat nicio știre din domeniul ${selectedLabel} în ultimele 24 de ore.`);
       setLoading(false);
       return;
     }
 
-    // Creăm un prompt ce menționează clar ce se dorește
-    const question = `Rezuma știrile din ${selectedHours} ${
-      selectedHours === "1" ? "ultima oră" : "ultimele ore"
-    } din Publicația ${selectedSource} la domeniul ${selectedLabel}. 
+    const question = `Rezuma știrile din ultimele 24 de ore din Publicația ${selectedSource} la domeniul ${selectedLabel}. 
 Te rog să extragi doar informațiile cele mai importante, fără a acoperi toate știrile, și să te încadrezi în 1024 tokens.
 Dacă nu găsești știri relevante, te rog să returnezi mesajul "Din pacate site-ul respectiv nu detine nicio stire conform cu criteriile alese, va rugam sa incercati o alta cautare".`;
 
@@ -125,17 +110,10 @@ Dacă nu găsești știri relevante, te rog să returnezi mesajul "Din pacate si
         }),
       });
       const data = await res.json();
-
       if (res.ok) {
-        const defaultMessageFragment =
-          "îmi pare rău, dar ca asistent AI, nu am capacitatea";
-        if (
-          data.answer &&
-          data.answer.toLowerCase().includes(defaultMessageFragment)
-        ) {
-          setAnswer(
-            "Din pacate site-ul respectiv nu detine nicio stire conform cu criteriile alese, va rugam sa incercati o alta cautare"
-          );
+        const defaultMessageFragment = "îmi pare rău, dar ca asistent AI, nu am capacitatea";
+        if (data.answer && data.answer.toLowerCase().includes(defaultMessageFragment)) {
+          setAnswer("Din pacate site-ul respectiv nu detine nicio stire conform cu criteriile alese, va rugam sa incercati o alta cautare");
         } else {
           setAnswer(data.answer || "Nu am găsit un răspuns.");
         }
@@ -145,16 +123,42 @@ Dacă nu găsești știri relevante, te rog să returnezi mesajul "Din pacate si
     } catch (err) {
       setAnswer("Eroare la trimiterea cererii.");
     }
-
     setLoading(false);
   };
 
-  return (
-    <div style={{ maxWidth: 600, margin: "0 auto", padding: 20 }}>
-      <h2>Asistent AI pentru știri 🧠</h2>
+  // Calculăm textul pentru buton
+  let buttonText = "";
+  if (!selectedSource || !selectedLabel || filteredArticles.length === 0) {
+    buttonText = "Te rugam sa selectezi o categorie pentru a putea face un rezumat";
+  } else {
+    const count = filteredArticles.length;
+    let formattedCount = "";
+    if (count === 1) {
+      formattedCount = "o știre";
+    } else if (count > 1 && count < 19) {
+      formattedCount = `${count} știri`;
+    } else if (count > 19) {
+      formattedCount = `${count} de știri`;
+    }
+    buttonText = `${selectedSource} a publicat ${formattedCount} în categoria ${selectedLabel} în ultimele 24 de ore`;
+  }
 
-      {/* Dropdown pentru Publicație (source) */}
-      <label style={{ display: "block", marginBottom: 10 }}>
+  // Determinăm dacă butonul trebuie să fie dezactivat:
+  // Dacă nu este selectată publicația/domeniul, dacă încă se încarcă rezultatele, dacă nu există articole filtrate,
+  // sau după ce s-a generat un rezultat (answer existent)
+  const isDisabled =
+    !selectedSource ||
+    !selectedLabel ||
+    loading ||
+    articlesFilteredLoading ||
+    filteredArticles.length === 0 ||
+    answer !== "";
+
+  return (
+    <div style={{ maxWidth: 600, margin: "auto !important", padding: 20 }}>
+
+      {/* Dropdown pentru Publicație */}
+      <label style={{ display: "block", marginTop: "20px !important" }}>
         Publicație:
         <select
           value={selectedSource}
@@ -162,7 +166,7 @@ Dacă nu găsești știri relevante, te rog să returnezi mesajul "Din pacate si
           style={{ width: "100%", padding: 10, marginTop: 5 }}
         >
           <option value="">Selectează publicația</option>
-          {sources.map((source) => (
+          {sources.map(source => (
             <option key={source} value={source}>
               {source}
             </option>
@@ -170,17 +174,17 @@ Dacă nu găsești știri relevante, te rog să returnezi mesajul "Din pacate si
         </select>
       </label>
 
-      {/* Dropdown pentru Domeniu (label) */}
-      <label style={{ display: "block", marginBottom: 10 }}>
-        Domeniu:
+      {/* Dropdown pentru Domeniu */}
+      <label style={{ display: "block", marginTop: "20px !important" }}>
+        Categorie:
         <select
           value={selectedLabel}
           onChange={(e) => setSelectedLabel(e.target.value)}
           style={{ width: "100%", padding: 10, marginTop: 5 }}
           disabled={!selectedSource}
         >
-          <option value="">Selectează domeniul</option>
-          {labels.map((label) => (
+          <option value="">Selectează categoria</option>
+          {labels.map(label => (
             <option key={label} value={label}>
               {label}
             </option>
@@ -188,33 +192,27 @@ Dacă nu găsești știri relevante, te rog să returnezi mesajul "Din pacate si
         </select>
       </label>
 
-      {/* Dropdown pentru Timp */}
-      <label style={{ display: "block", marginBottom: 10 }}>
-        Timp:
-        <select
-          value={selectedHours}
-          onChange={(e) => setSelectedHours(e.target.value)}
-          style={{ width: "100%", padding: 10, marginTop: 5 }}
-        >
-          {timeOptions.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      </label>
+      {/* Dropdown-ul pentru timp a fost eliminat; se folosește implicit 24 de ore */}
 
       <button
         onClick={handleSummarize}
-        disabled={!selectedSource || !selectedLabel || !selectedHours || loading}
-        style={{ marginTop: 10 }}
+        disabled={isDisabled}
+        style={{
+          marginTop: "20px !important",
+          width: "100%",
+          padding: "10px 20px",
+          backgroundColor: isDisabled ? "gray !important" : "green !important",
+          color: "white !important",
+          border: "none",
+          borderRadius: "4px",
+          cursor: isDisabled ? "not-allowed" : "pointer"
+        }}
       >
-        {loading ? "Se generează..." : "Afișează sumarul știrilor"}
+        {loading ? "Scriem rezumatul pentru tine..." : buttonText}
       </button>
 
       {answer && (
-        <div style={{ marginTop: 20, background: "#f9f9f9", padding: 15, borderRadius: 8 }}>
-          <strong>Răspuns AI:</strong>
+        <div style={{ marginTop: 20, background: "rgb(249, 249, 249)", padding: 15, borderRadius: 8 }}>
           <p style={{ whiteSpace: "pre-wrap" }}>{answer}</p>
         </div>
       )}

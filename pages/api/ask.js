@@ -14,7 +14,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { source, label, question } = req.body;
+  const { source, label, hours, question } = req.body;
   if (!source || !label || !question) {
     return res.status(400).json({ error: "Lipsesc unul sau mai multe câmpuri" });
   }
@@ -26,8 +26,8 @@ export default async function handler(req, res) {
     const data = await apiResponse.json();
     const articles = data.data || [];
 
-    // Calculăm timpul pentru filtrare (ultima oră)
-    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+    // Calculăm timpul pentru filtrare (ultimele 24 de ore)
+    const timeAgo = new Date(Date.now() - Number(hours) * 60 * 60 * 1000);
 
     // Filtrăm articolele după sursă, label și dată
     const filteredArticles = articles.filter((article) => {
@@ -35,7 +35,7 @@ export default async function handler(req, res) {
       return (
         article.source === source &&
         article.label === label &&
-        articleDate >= oneHourAgo
+        articleDate >= timeAgo
       );
     });
 
@@ -43,11 +43,11 @@ export default async function handler(req, res) {
     const context = filteredArticles
       .map(
         (a, i) => `
-#${i + 1} [${a.source}, ${a.label}] 
-Data publicării: ${a.date}
-Conținut: ${a.text}
-`
-      )
+          #${i + 1} [${a.source}, ${a.label}] 
+          Data publicării: ${a.date}
+          Conținut: ${a.text}
+          `
+        )
       .join("\n\n");
 
     // Construim promptul cu informațiile necesare
@@ -55,7 +55,7 @@ Conținut: ${a.text}
 Caută din Publicația: ${source}.
 Domeniul: ${label}.
 
-Acestea sunt știrile găsite (ultima oră):
+Acestea sunt știrile găsite (ultimele 24 de ore):
 ${context}
 
 Întrebare: ${question}
@@ -76,10 +76,9 @@ Răspunde clar, în stil jurnalistic, rezumând doar informațiile relevante.
           content: prompt + "\nVă rog să răspunzi concis și să nu depășești 1024 tokens.",
         },
       ],
-      max_tokens: 1024, // Acesta este locul unde setezi limita de tokens pentru răspuns
+      max_tokens: 1024,
     });
     
-
     // Extragem răspunsul de la AI
     const answer = openAIResponse.choices[0].message.content.trim();
     return res.status(200).json({ answer });
