@@ -46,11 +46,11 @@ const Footer = () => {
             <div className="footer-column">
               <h3>NEWSFLOW</h3>
               <ul>
-                <li>
-                  <a href="/despre">Despre noi</a>
+              <li>
+                  <a href="/">Home</a>
                 </li>
                 <li>
-                  <a href="/contact">Contact</a>
+                  <a href="/despre">Despre noi</a>
                 </li>
               </ul>
             </div>
@@ -62,7 +62,7 @@ const Footer = () => {
                   <a href="/publicitate">Publicitate</a>
                 </li>
                 <li>
-                  <a href="/reteaua-publicitati">Rețeaua de publicații</a>
+                  <a href="/network">Rețeaua de publicații</a>
                 </li>
               </ul>
             </div>
@@ -71,16 +71,13 @@ const Footer = () => {
               <h3>LEGAL</h3>
               <ul>
                 <li>
-                  <a href="/privacy-policy">Privacy Policy</a>
+                  <a href="/privacy">Privacy Policy</a>
                 </li>
                 <li>
-                  <a href="/cookie-policy">Cookie Policy</a>
+                  <a href="/cookies">Cookie Policy</a>
                 </li>
                 <li>
-                  <a href="/legal-notice">Legal Notice</a>
-                </li>
-                <li>
-                  <a href="/privacy-settings">Privacy Settings</a>
+                  <a href="/terms">Termeni și condiții</a>
                 </li>
               </ul>
             </div>
