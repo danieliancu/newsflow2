@@ -39,18 +39,17 @@ export default async function handler(req, res) {
       );
     });
 
-    // Creăm contextul pentru prompt folosind câmpurile: source, text, label, date
+    // Creăm contextul pentru prompt folosind câmpurile: source, text, label, date și href
     const context = filteredArticles
-      .map(
-        (a, i) => `
+      .map((a, i) => `
 #${i + 1} [${a.source}, ${a.label}]
 Data publicării: ${a.date}
 Conținut: ${a.text}
-        `
-      )
+Link: ${a.href}
+      `)
       .join("\n\n");
 
-    // Construim promptul cu instrucțiunile suplimentare pentru formatul HTML
+    // Construim promptul cu instrucțiuni suplimentare pentru formatul HTML și hyperlink-uri
     const prompt = `
 Caută din Publicația: ${source}.
 Domeniul: ${label}.
@@ -60,16 +59,26 @@ ${context}
 
 Întrebare: ${question}
 
-Te rog să formatezi răspunsul în HTML folosind exclusiv tag-ul <p>. Structura răspunsului trebuie să fie următoarea:
-<p>{O introducere despre numărul de știri din categoria aleasă și motivul jurnalistic pentru care ne concentrăm pe anumite știri (foarte pe scurt)}</p>
-<p>Știre</p>
-<p>Știre</p>
-<p>Știre</p>
-... (și tot așa)
-<p>{O concluzie care rezumă direcția evenimentelor afișate, tot pe scurt}</p>
+Te rog să formatezi răspunsul în HTML folosind exclusiv tag-ul <p>. 
+Regulile pentru formatarea răspunsului sunt:
+1. Răspunde exclusiv în HTML folosind tag-ul <p> pentru fiecare paragraf.
+2. Pentru fiecare știre, identifică propoziția ce conține verbul principal (acțiunea centrală a știrii).
+3. În acea propoziție, inserează hyperlink-ul exact lângă verbul principal. Pentru inserare, înlocuiește segmentul corespunzător verbului (sau inserează imediat după el) cu un element de tip: <a href="{href}" target="_blank" rel="noopener noreferrer">Textul acțiunii</a>, unde {href} este preluat din contextul respectiv.
+4. Nu adăuga text suplimentar precum "Detalii suplimentare aici" sau alte completări. Răspunsul trebuie să fie un rezumat curat și integrat.
+
+Structura finală a răspunsului trebuie să fie:
+<p>{O introducere scurtă privind numărul de știri și contextul general}</p>
+<p>{Știre 1 cu hyperlink integrat în propoziție}</p>
+<p>{Știre 2 cu hyperlink integrat în propoziție}</p>
+...
+<p>{O concluzie scurtă de încheiere}</p>
+
+Important: Pentru fiecare știre, identifică verbul principal care exprimă acțiunea și, dacă e necesar, completează-l cu cuvinte adiționale pentru a forma o expresie relevantă. Această expresie trebuie înlocuită cu un hyperlink HTML folosind tag-ul <a href="{href}">Expresie</a>, unde {href} este preluat din contextul fiecărei știri.
 
 Asigură-te că răspunsul este concis și nu depășește 1024 tokens.
 Răspunde clar și în stil jurnalistic, concentrându-te doar pe informațiile relevante.
+Ai grijă să nu rămâi cu text neformatat sau cu tag-uri HTML neînchise.
+Ai grijă să nu rămâi cu text neterminat sau cu propoziții incomplete.
 `;
 
     // Apelăm endpoint-ul de chat completions

@@ -15,7 +15,7 @@ export default function Home() {
     el.style.display = "none";
   });
 
-  // optional: dacă vrei să o readuci când se iese de pe pagină:
+  // optional: când se iese de pe pagină:
   return () => {
     elements.forEach(el => {
       el.style.display = "";

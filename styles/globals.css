@@ -1638,3 +1638,8 @@ button {
 .answer p {
   margin-bottom:10px !important;
 }
+
+.answer a {
+  color:blue;
+  text-decoration: underline;
+}

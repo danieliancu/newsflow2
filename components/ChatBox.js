@@ -75,51 +75,53 @@ export default function ChatBox() {
   }, [selectedSource, selectedLabel, selectedHours]);
 
   // Funcția ce construiește promptul și face cererea către /api/ask
-  const handleSummarize = async () => {
-    if (!selectedSource || !selectedLabel) return;
+// Funcția ce construiește promptul și face cererea către /api/ask
+const handleSummarize = async () => {
+  if (!selectedSource || !selectedLabel) return;
 
-    setLoading(true);
-    setAnswer("");
+  setLoading(true);
+  setAnswer("");
 
-    if (filteredArticles.length === 0) {
-      setAnswer(
-        `Din păcate, site-ul ${selectedSource} nu a publicat nicio știre din domeniul ${selectedLabel} în ultimele 24 de ore.`
-      );
-      setLoading(false);
-      return;
-    }
-
-    const question = `Rezuma știrile din ultimele 24 de ore din Publicația ${selectedSource} la domeniul ${selectedLabel}. Te rog să extragi doar informațiile cele mai importante și să te încadrezi în 1024 tokens. Dacă nu găsești știri relevante, te rog să returnezi mesajul "Din pacate site-ul respectiv nu detine nicio stire conform cu criteriile alese, va rugam sa incercati o alta cautare".`;
-
-    try {
-      const res = await fetch("/api/ask", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          source: selectedSource,
-          label: selectedLabel,
-          hours: selectedHours,
-          question,
-        }),
-      });
-      const data = await res.json();
-      if (res.ok) {
-        const defaultMessageFragment = "îmi pare rău, dar ca asistent AI, nu am capacitatea";
-        if (data.answer && data.answer.toLowerCase().includes(defaultMessageFragment)) {
-          setAnswer(
-            "Din pacate site-ul respectiv nu detine nicio stire conform cu criteriile alese, va rugam sa incercati o alta cautare"
-          );
-        } else {
-          setAnswer(data.answer || "Nu am găsit un răspuns.");
-        }
-      } else {
-        setAnswer(data.error || "Eroare la cerere.");
-      }
-    } catch (err) {
-      setAnswer("Eroare la trimiterea cererii.");
-    }
+  if (filteredArticles.length === 0) {
+    setAnswer(
+      `Din păcate, site-ul ${selectedSource} nu a publicat nicio știre din domeniul ${selectedLabel} în ultimele 24 de ore.`
+    );
     setLoading(false);
-  };
+    return;
+  }
+
+  const question = `Rezuma știrile din ultimele 24 de ore din Publicația ${selectedSource} la domeniul ${selectedLabel}. Te rog să extragi doar informațiile cele mai importante și să te încadrezi în 1024 tokens. Dacă nu găsești știri relevante, te rog să returnezi mesajul "Din pacate site-ul respectiv nu detine nicio stire conform cu criteriile alese, va rugam sa incercati o alta cautare".`;
+
+  try {
+    const res = await fetch("/api/ask", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        source: selectedSource,
+        label: selectedLabel,
+        hours: selectedHours,
+        question,
+      }),
+    });
+    const data = await res.json();
+    if (res.ok) {
+      // Verificare: Dacă răspunsul are conținut, oricât de mic, îl afișăm.
+      if (data.answer && data.answer.trim() !== "") {
+        setAnswer(data.answer);
+      } else {
+        setAnswer(
+          "Din păcate site-ul respectiv nu deține nicio știre conform cu criteriile alese, vă rugăm să încercați o altă căutare"
+        );
+      }
+    } else {
+      setAnswer(data.error || "Eroare la cerere.");
+    }
+  } catch (err) {
+    setAnswer("Eroare la trimiterea cererii.");
+  }
+  setLoading(false);
+};
+
 
   // Calculăm textul pentru buton
   let buttonText = "";
