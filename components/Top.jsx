@@ -1,5 +1,6 @@
 import React from 'react';
 import { FaUser, FaStar } from 'react-icons/fa';
+import AISparkleIcon from './aisparkleicon';
 
 const Top = ({ 
   searchTerm, 
@@ -37,8 +38,8 @@ const Top = ({
       </div>
 
       <div className="top-right">
-        <a href="https://newsflow.ro/chat" className="rezumat" style={{ textDecoration: "none", color: "inherit" }}>
-          <FaStar />{" "}
+        <a href="https://newsflow.ro/chat" className="rezumat">
+          <AISparkleIcon />{" "}
           <span>
             REZUMATUL ZILEI
           </span>

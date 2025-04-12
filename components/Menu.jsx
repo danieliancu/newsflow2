@@ -1,6 +1,7 @@
 // components/Menu.jsx
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { FaBars, FaTimes, FaUser, FaSearch } from "react-icons/fa";
+import AISparkleIcon from './aisparkleicon';
 // here
 
 // Creăm contextul cu o valoare implicită (fallback)
@@ -100,7 +101,12 @@ const Menu = ({
             </a>
           </h1>
           <span className="top-right-mobile">
+              <a href="https://newsflow.ro/chat" >
+              <AISparkleIcon style={{ height:"34" }} />{" "}
+              </a>
+              <a href="">  
             <FaUser className="login" style={{ fill: "white", fontSize: "24px" }} />
+            </a>
             {isSearchOpen ? (
               <FaTimes
                 className="search-mobile"
@@ -110,7 +116,7 @@ const Menu = ({
             ) : (
               <FaSearch
                 className="search-mobile"
-                style={{ fill: "white", fontSize: "24px" }}
+                style={{ fill: "white", fontSize: "24px", marginLeft:"5px !important" }}
                 onClick={toggleSearchOnMobile}
               />
             )}

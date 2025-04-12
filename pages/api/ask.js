@@ -20,7 +20,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Preluarea articolelor din API
+    // Preluăm articolele din API
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api/articles";
     const apiResponse = await fetch(apiUrl);
     const data = await apiResponse.json();
@@ -43,14 +43,14 @@ export default async function handler(req, res) {
     const context = filteredArticles
       .map(
         (a, i) => `
-          #${i + 1} [${a.source}, ${a.label}] 
-          Data publicării: ${a.date}
-          Conținut: ${a.text}
-          `
-        )
+#${i + 1} [${a.source}, ${a.label}]
+Data publicării: ${a.date}
+Conținut: ${a.text}
+        `
+      )
       .join("\n\n");
 
-    // Construim promptul cu informațiile necesare
+    // Construim promptul cu instrucțiunile suplimentare pentru formatul HTML
     const prompt = `
 Caută din Publicația: ${source}.
 Domeniul: ${label}.
@@ -60,7 +60,16 @@ ${context}
 
 Întrebare: ${question}
 
-Răspunde clar, în stil jurnalistic, rezumând doar informațiile relevante.
+Te rog să formatezi răspunsul în HTML folosind exclusiv tag-ul <p>. Structura răspunsului trebuie să fie următoarea:
+<p>{O introducere despre numărul de știri din categoria aleasă și motivul jurnalistic pentru care ne concentrăm pe anumite știri (foarte pe scurt)}</p>
+<p>Știre</p>
+<p>Știre</p>
+<p>Știre</p>
+... (și tot așa)
+<p>{O concluzie care rezumă direcția evenimentelor afișate, tot pe scurt}</p>
+
+Asigură-te că răspunsul este concis și nu depășește 1024 tokens.
+Răspunde clar și în stil jurnalistic, concentrându-te doar pe informațiile relevante.
 `;
 
     // Apelăm endpoint-ul de chat completions
@@ -69,16 +78,16 @@ Răspunde clar, în stil jurnalistic, rezumând doar informațiile relevante.
       messages: [
         {
           role: "system",
-          content: "Ești un asistent AI care răspunde clar și în stil jurnalistic.",
+          content: "Ești un asistent AI care răspunde clar, păstrând rigoarea jurnalistică dar folosind un limbaj comun, obișnuit, de zi cu zi.",
         },
         {
           role: "user",
-          content: prompt + "\nVă rog să răspunzi concis și să nu depășești 1024 tokens.",
+          content: prompt,
         },
       ],
       max_tokens: 1024,
     });
-    
+
     // Extragem răspunsul de la AI
     const answer = openAIResponse.choices[0].message.content.trim();
     return res.status(200).json({ answer });

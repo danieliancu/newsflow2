@@ -1045,11 +1045,12 @@ button {
 }
 
 .top-right-mobile {
-  width:65px;  
+  width:100px;  
   position:absolute;
   right:0px;
   display: flex; 
   justify-content: space-between;
+  align-items: center;
   display: none;
 }
 
@@ -1090,6 +1091,13 @@ button {
 .rezumat
 {
   margin-right:30px !important;
+}
+
+.rezumat {
+  display: flex;
+  gap: 1px;
+  align-items: center;
+  padding-top:3px;
 }
 
 @media only screen and (max-width: 1000px) {
@@ -1614,4 +1622,19 @@ button {
 .buttonDisabled {
   margin-top:20px !important;  
   background-color: gray !important;
+}
+.answer {
+  margin-top: 20px;
+  background: rgb(249, 249, 249);
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.answer p:first-child,
+.answer p:last-child {
+  font-weight: bold;
+}
+
+.answer p {
+  margin-bottom:10px !important;
 }

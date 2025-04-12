@@ -1,6 +1,3 @@
-// pages/api/ask.js
-// pages/chat.js
-// pages/api.articlesFiltered.js
 // components/ChatBox.js
 import { useState, useEffect } from "react";
 
@@ -16,15 +13,14 @@ export default function ChatBox() {
 
   const [selectedSource, setSelectedSource] = useState("");
   const [selectedLabel, setSelectedLabel] = useState("");
-  // Timpul este fixat implicit la 24 de ore (dropdown-ul pentru timp a fost eliminat)
+  // Timpul este fixat implicit la 24 de ore
   const [selectedHours] = useState("24");
 
   const [answer, setAnswer] = useState("");
   const [loading, setLoading] = useState(false);
-  // Stare nouă pentru a monitoriza fetch-ul articolelor filtrate
+  // Stare pentru monitorizarea fetch-ului articolelor filtrate
   const [articlesFilteredLoading, setArticlesFilteredLoading] = useState(false);
 
-  // Preluăm articolele complete din API la montarea componentei
   useEffect(() => {
     fetch("/api/articles")
       .then((res) => res.json())
@@ -40,7 +36,6 @@ export default function ChatBox() {
       });
   }, []);
 
-  // Actualizăm lista de etichete (labels) când se schimbă publicația selectată
   useEffect(() => {
     if (selectedSource) {
       const filteredForLabels = articles.filter(article => article.source === selectedSource);
@@ -55,12 +50,10 @@ export default function ChatBox() {
     }
   }, [selectedSource, articles, selectedLabel]);
 
-  // Resetează răspunsul la orice schimbare în dropdown (Publicație sau Domeniu)
   useEffect(() => {
     setAnswer("");
   }, [selectedSource, selectedLabel]);
 
-  // Preluăm articolele filtrate din API folosind endpoint-ul articlesFiltered
   useEffect(() => {
     if (!selectedSource || !selectedLabel) return;
 
@@ -81,7 +74,7 @@ export default function ChatBox() {
       });
   }, [selectedSource, selectedLabel, selectedHours]);
 
-  // Funcția care construiește promptul și face cererea către /api/ask
+  // Funcția ce construiește promptul și face cererea către /api/ask
   const handleSummarize = async () => {
     if (!selectedSource || !selectedLabel) return;
 
@@ -89,14 +82,14 @@ export default function ChatBox() {
     setAnswer("");
 
     if (filteredArticles.length === 0) {
-      setAnswer(`Din păcate, site-ul ${selectedSource} nu a publicat nicio știre din domeniul ${selectedLabel} în ultimele 24 de ore.`);
+      setAnswer(
+        `Din păcate, site-ul ${selectedSource} nu a publicat nicio știre din domeniul ${selectedLabel} în ultimele 24 de ore.`
+      );
       setLoading(false);
       return;
     }
 
-    const question = `Rezuma știrile din ultimele 24 de ore din Publicația ${selectedSource} la domeniul ${selectedLabel}. 
-Te rog să extragi doar informațiile cele mai importante, fără a acoperi toate știrile, și să te încadrezi în 1024 tokens.
-Dacă nu găsești știri relevante, te rog să returnezi mesajul "Din pacate site-ul respectiv nu detine nicio stire conform cu criteriile alese, va rugam sa incercati o alta cautare".`;
+    const question = `Rezuma știrile din ultimele 24 de ore din Publicația ${selectedSource} la domeniul ${selectedLabel}. Te rog să extragi doar informațiile cele mai importante și să te încadrezi în 1024 tokens. Dacă nu găsești știri relevante, te rog să returnezi mesajul "Din pacate site-ul respectiv nu detine nicio stire conform cu criteriile alese, va rugam sa incercati o alta cautare".`;
 
     try {
       const res = await fetch("/api/ask", {
@@ -113,7 +106,9 @@ Dacă nu găsești știri relevante, te rog să returnezi mesajul "Din pacate si
       if (res.ok) {
         const defaultMessageFragment = "îmi pare rău, dar ca asistent AI, nu am capacitatea";
         if (data.answer && data.answer.toLowerCase().includes(defaultMessageFragment)) {
-          setAnswer("Din pacate site-ul respectiv nu detine nicio stire conform cu criteriile alese, va rugam sa incercati o alta cautare");
+          setAnswer(
+            "Din pacate site-ul respectiv nu detine nicio stire conform cu criteriile alese, va rugam sa incercati o alta cautare"
+          );
         } else {
           setAnswer(data.answer || "Nu am găsit un răspuns.");
         }
@@ -128,24 +123,29 @@ Dacă nu găsești știri relevante, te rog să returnezi mesajul "Din pacate si
 
   // Calculăm textul pentru buton
   let buttonText = "";
-  if (!selectedSource || !selectedLabel || filteredArticles.length === 0) {
-    buttonText = "Te rugam sa selectezi o categorie pentru a putea face un rezumat";
+
+  if (answer !== "") {
+    // Dacă avem deja un răspuns, arătăm textul standard
+    buttonText = "Te rugăm să selectezi din nou o publicație și o categorie pentru a putea face un rezumat.";
+  } else if (articlesFilteredLoading) {
+    buttonText = "Căutăm știrile...";
+  } else if (!selectedSource || !selectedLabel || filteredArticles.length === 0) {
+    buttonText = "Te rugăm să selectezi o publicație și o categorie pentru a putea face un rezumat.";
   } else {
     const count = filteredArticles.length;
     let formattedCount = "";
     if (count === 1) {
       formattedCount = "o știre";
-    } else if (count > 1 && count < 19) {
+    } else if ((count > 1 && count < 19) || count > 100) {
       formattedCount = `${count} știri`;
     } else if (count > 19) {
       formattedCount = `${count} de știri`;
     }
-    buttonText = `${selectedSource} a publicat ${formattedCount} în categoria ${selectedLabel} în ultimele 24 de ore`;
+  
+    buttonText = `${selectedSource} a publicat ${formattedCount} în categoria ${selectedLabel} în ultimele 24 de ore. Apasă aici pentru a vedea rezumatul lor.`;
   }
+  
 
-  // Determinăm dacă butonul trebuie să fie dezactivat:
-  // Dacă nu este selectată publicația/domeniul, dacă încă se încarcă rezultatele, dacă nu există articole filtrate,
-  // sau după ce s-a generat un rezultat (answer existent)
   const isDisabled =
     !selectedSource ||
     !selectedLabel ||
@@ -155,10 +155,9 @@ Dacă nu găsești știri relevante, te rog să returnezi mesajul "Din pacate si
     answer !== "";
 
   return (
-    <div style={{ maxWidth: 600, margin: "auto !important", padding: 20 }}>
-
+    <div style={{ maxWidth: 600, margin: "auto !important", padding: "20px !important" }}>
       {/* Dropdown pentru Publicație */}
-      <label style={{ display: "block", marginTop: "20px !important" }}>
+      <label style={{ display: "block", marginTop: 20 }}>
         Publicație:
         <select
           value={selectedSource}
@@ -166,7 +165,7 @@ Dacă nu găsești știri relevante, te rog să returnezi mesajul "Din pacate si
           style={{ width: "100%", padding: 10, marginTop: 5 }}
         >
           <option value="">Selectează publicația</option>
-          {sources.map(source => (
+          {sources.map((source) => (
             <option key={source} value={source}>
               {source}
             </option>
@@ -184,7 +183,7 @@ Dacă nu găsești știri relevante, te rog să returnezi mesajul "Din pacate si
           disabled={!selectedSource}
         >
           <option value="">Selectează categoria</option>
-          {labels.map(label => (
+          {labels.map((label) => (
             <option key={label} value={label}>
               {label}
             </option>
@@ -192,30 +191,29 @@ Dacă nu găsești știri relevante, te rog să returnezi mesajul "Din pacate si
         </select>
       </label>
 
-      {/* Dropdown-ul pentru timp a fost eliminat; se folosește implicit 24 de ore */}
-
       <button
         onClick={handleSummarize}
         disabled={isDisabled}
         className={isDisabled ? "buttonDisabled" : "buttonEnabled"}
         style={{
-          marginTop: "20px",
+          marginTop: 20,
           width: "100%",
           padding: "10px 20px",
           color: "white",
           border: "none",
           borderRadius: "4px",
-          cursor: isDisabled ? "not-allowed" : "pointer"
+          cursor: isDisabled ? "not-allowed" : "pointer",
         }}
       >
         {loading ? "Scriem rezumatul pentru tine..." : buttonText}
       </button>
 
-
+      {/* Afișarea răspunsului – interpretăm HTML-ul primit */}
       {answer && (
-        <div style={{ marginTop: 20, background: "rgb(249, 249, 249)", padding: 15, borderRadius: 8 }}>
-          <p style={{ whiteSpace: "pre-wrap" }}>{answer}</p>
-        </div>
+        <div
+          className="answer"
+          dangerouslySetInnerHTML={{ __html: answer }}
+        />
       )}
     </div>
   );

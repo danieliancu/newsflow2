@@ -46,6 +46,7 @@ const NewsDetail = ({ article, slug }) => {
       el.querySelectorAll("button.back-button-mobile").forEach((btn) => btn.remove());
       el.querySelectorAll("svg").forEach((svg) => svg.remove());
 
+      /*
       const backButton = document.createElement("button");
       backButton.className = "back-button-mobile";
       backButton.innerHTML = ReactDOMServer.renderToStaticMarkup(<FaArrowLeft />) + " Înapoi";
@@ -54,6 +55,7 @@ const NewsDetail = ({ article, slug }) => {
       });
 
       el.appendChild(backButton);
+      */
     });
   };
 
