@@ -75,61 +75,56 @@ export default function ChatBox() {
   }, [selectedSource, selectedLabel, selectedHours]);
 
   // Funcția ce construiește promptul și face cererea către /api/ask
-// Funcția ce construiește promptul și face cererea către /api/ask
-const handleSummarize = async () => {
-  if (!selectedSource || !selectedLabel) return;
+  const handleSummarize = async () => {
+    if (!selectedSource || !selectedLabel) return;
 
-  setLoading(true);
-  setAnswer("");
+    setLoading(true);
+    setAnswer("");
 
-  if (filteredArticles.length === 0) {
-    setAnswer(
-      `Din păcate, site-ul ${selectedSource} nu a publicat nicio știre din domeniul ${selectedLabel} în ultimele 24 de ore.`
-    );
-    setLoading(false);
-    return;
-  }
-
-  const question = `Rezuma știrile din ultimele 24 de ore din Publicația ${selectedSource} la domeniul ${selectedLabel}. Te rog să extragi doar informațiile cele mai importante și să te încadrezi în 1024 tokens. Dacă nu găsești știri relevante, te rog să returnezi mesajul "Din pacate site-ul respectiv nu detine nicio stire conform cu criteriile alese, va rugam sa incercati o alta cautare".`;
-
-  try {
-    const res = await fetch("/api/ask", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        source: selectedSource,
-        label: selectedLabel,
-        hours: selectedHours,
-        question,
-      }),
-    });
-    const data = await res.json();
-    if (res.ok) {
-      // Verificare: Dacă răspunsul are conținut, oricât de mic, îl afișăm.
-      if (data.answer && data.answer.trim() !== "") {
-        setAnswer(data.answer);
-      } else {
-        setAnswer(
-          "Din păcate site-ul respectiv nu deține nicio știre conform cu criteriile alese, vă rugăm să încercați o altă căutare"
-        );
-      }
-    } else {
-      setAnswer(data.error || "Eroare la cerere.");
+    if (filteredArticles.length === 0) {
+      setAnswer(
+        `Din păcate, site-ul ${selectedSource} nu a publicat nicio știre din domeniul ${selectedLabel} în ultimele 24 de ore.`
+      );
+      setLoading(false);
+      return;
     }
-  } catch (err) {
-    setAnswer("Eroare la trimiterea cererii.");
-  }
-  setLoading(false);
-};
 
+    const question = `Rezuma știrile din ultimele 24 de ore din Publicația ${selectedSource} la domeniul ${selectedLabel}. Te rog să extragi doar informațiile cele mai importante și să te încadrezi în 1024 tokens. Dacă nu găsești știri relevante, te rog să returnezi mesajul "Din pacate site-ul respectiv nu detine nicio stire conform cu criteriile alese, va rugam sa incercati o alta cautare".`;
+
+    try {
+      const res = await fetch("/api/ask", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          source: selectedSource,
+          label: selectedLabel,
+          hours: selectedHours,
+          question,
+        }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        // Verificare: Dacă răspunsul are conținut, oricât de mic, îl afișăm.
+        if (data.answer && data.answer.trim() !== "") {
+          setAnswer(data.answer);
+        } else {
+          setAnswer(
+            "Din păcate site-ul respectiv nu deține nicio știre conform cu criteriile alese, vă rugăm să încercați o altă căutare"
+          );
+        }
+      } else {
+        setAnswer(data.error || "Eroare la cerere.");
+      }
+    } catch (err) {
+      setAnswer("Eroare la trimiterea cererii.");
+    }
+    setLoading(false);
+  };
 
   // Calculăm textul pentru buton
   let buttonText = "";
 
-  if (answer !== "") {
-    // Dacă avem deja un răspuns, arătăm textul standard
-    buttonText = "Te rugăm să selectezi din nou o publicație și o categorie pentru a putea face un rezumat.";
-  } else if (articlesFilteredLoading) {
+  if (articlesFilteredLoading) {
     buttonText = "Căutăm știrile...";
   } else if (!selectedSource || !selectedLabel || filteredArticles.length === 0) {
     buttonText = "Te rugăm să selectezi o publicație și o categorie pentru a putea face un rezumat.";
@@ -143,11 +138,10 @@ const handleSummarize = async () => {
     } else if (count > 19) {
       formattedCount = `${count} de știri`;
     }
-  
     buttonText = `${selectedSource} a publicat ${formattedCount} în categoria ${selectedLabel} în ultimele 24 de ore. Apasă aici pentru a vedea rezumatul lor.`;
   }
-  
 
+  // Determinăm dacă butonul trebuie dezactivat
   const isDisabled =
     !selectedSource ||
     !selectedLabel ||
@@ -157,7 +151,7 @@ const handleSummarize = async () => {
     answer !== "";
 
   return (
-    <div style={{ maxWidth: 600, margin: "auto !important", padding: "20px !important" }}>
+    <div style={{ maxWidth: 600, margin: "auto !important", padding: "20px !important", minHeight: "40vh" }}>
       {/* Dropdown pentru Publicație */}
       <label style={{ display: "block", marginTop: 20 }}>
         Publicație:
@@ -193,29 +187,29 @@ const handleSummarize = async () => {
         </select>
       </label>
 
-      <button
-        onClick={handleSummarize}
-        disabled={isDisabled}
-        className={isDisabled ? "buttonDisabled" : "buttonEnabled"}
-        style={{
-          marginTop: 20,
-          width: "100%",
-          padding: "10px 20px",
-          color: "white",
-          border: "none",
-          borderRadius: "4px",
-          cursor: isDisabled ? "not-allowed" : "pointer",
-        }}
-      >
-        {loading ? "Scriem rezumatul pentru tine..." : buttonText}
-      </button>
+      {/* Afișăm butonul doar dacă nu există un răspuns */}
+      {!answer && (
+        <button
+          onClick={handleSummarize}
+          disabled={isDisabled}
+          className={isDisabled ? "buttonDisabled" : "buttonEnabled"}
+          style={{
+            marginTop: 20,
+            width: "100%",
+            padding: "10px 20px",
+            color: "white",
+            border: "none",
+            borderRadius: "4px",
+            cursor: isDisabled ? "not-allowed" : "pointer",
+          }}
+        >
+          {loading ? "Scriem rezumatul pentru tine..." : buttonText}
+        </button>
+      )}
 
       {/* Afișarea răspunsului – interpretăm HTML-ul primit */}
       {answer && (
-        <div
-          className="answer"
-          dangerouslySetInnerHTML={{ __html: answer }}
-        />
+        <div className="answer" dangerouslySetInnerHTML={{ __html: answer }} />
       )}
     </div>
   );

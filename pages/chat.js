@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import ChatBox from "../components/ChatBox";
 import AISparkleIcon from "@/components/aisparkleicon";
 import Menu, { CategoryProvider } from "../components/Menu";
+import Footer from "@/components/Footer";
 
 console.log("ChatBox type:", typeof ChatBox); // trebuie să fie "function"
 
@@ -70,7 +71,9 @@ export default function Home() {
           Această aplicație îți oferă un rezumat al celor mai importante știri din România, bazat pe cele mai recente articole de pe site-urile de știri.
         </h2>
         <ChatBox />
+        <Footer />
       </div>
     </CategoryProvider>
   );
 }
+

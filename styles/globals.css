@@ -1157,7 +1157,7 @@ button {
 
 @media only screen and (max-width: 500px) { 
   .logo {
-    font-size:6vw;
+    font-size:26px;
     padding-top:2px;
   }
   .giphy {
@@ -1624,7 +1624,7 @@ button {
   background-color: gray !important;
 }
 .answer {
-  margin-top: 20px;
+  margin-top: 20px !important;
   background: rgb(249, 249, 249);
   padding: 15px;
   border-radius: 8px;
