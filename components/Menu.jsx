@@ -102,21 +102,21 @@ const Menu = ({
           </h1>
           <span className="top-right-mobile">
               <a href="https://newsflow.ro/chat" >
-              <AISparkleIcon style={{ height:"34" }} />{" "}
+                <AISparkleIcon style={{ height:"34" }} />{" "}
               </a>
-              <a href="">  
-            <FaUser className="login" style={{ fill: "white", fontSize: "24px" }} />
-            </a>
+              <a href="" style={{ marginLeft: "5px !important", marginRight: "5px !important" }}>  
+                <FaUser className="login" style={{ fill: "white", fontSize: "24px" }} />
+              </a>
             {isSearchOpen ? (
               <FaTimes
                 className="search-mobile"
-                style={{ fill: "red", fontSize: "24px", paddingRight: "5px" }}
+                style={{ fill: "red", fontSize: "24px", marginLeft: "5px !important", width:"40px"}}
                 onClick={toggleSearchOnMobile}
               />
             ) : (
               <FaSearch
                 className="search-mobile"
-                style={{ fill: "white", fontSize: "24px", marginLeft:"5px !important" }}
+                style={{ fill: "white", fontSize: "24px", marginLeft: "5px !important", width:"40px"}}
                 onClick={toggleSearchOnMobile}
               />
             )}

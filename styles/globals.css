@@ -1045,11 +1045,11 @@ button {
 }
 
 .top-right-mobile {
-  width:100px;  
+  width:110px;  
   position:absolute;
   right:0px;
   display: flex; 
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   display: none;
 }

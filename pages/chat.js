@@ -10,7 +10,7 @@ export default function Home() {
 
 
   useEffect(() => {
-  const elements = document.querySelectorAll(".top-right-mobile");
+  const elements = document.querySelectorAll(".top-right-mobile>svg");
   elements.forEach(el => {
     el.style.display = "none";
   });

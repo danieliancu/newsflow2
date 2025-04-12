@@ -39,14 +39,14 @@ const NewsDetail = ({ article, slug }) => {
     router.push(`/?category=${encodeURIComponent(category)}`);
   };
 
-  // Eliminarea butoanelor SVG și adăugarea butonului "Înapoi"
+  /* Eliminarea butoanelor SVG și adăugarea butonului "Înapoi"
   const updateTopRightMobile = () => {
     const elements = document.querySelectorAll(".top-right-mobile");
     elements.forEach((el) => {
       el.querySelectorAll("button.back-button-mobile").forEach((btn) => btn.remove());
       el.querySelectorAll("svg").forEach((svg) => svg.remove());
 
-      /*
+      
       const backButton = document.createElement("button");
       backButton.className = "back-button-mobile";
       backButton.innerHTML = ReactDOMServer.renderToStaticMarkup(<FaArrowLeft />) + " Înapoi";
@@ -55,12 +55,28 @@ const NewsDetail = ({ article, slug }) => {
       });
 
       el.appendChild(backButton);
-      */
+      
     });
   };
 
   useEffect(() => {
     updateTopRightMobile();
+  }, []);
+
+  */
+
+    useEffect(() => {
+    const elements = document.querySelectorAll(".top-right-mobile>svg");
+    elements.forEach(el => {
+      el.style.display = "none";
+    });
+  
+    // optional: dacă vrei să o readuci când se iese de pe pagină:
+    return () => {
+      elements.forEach(el => {
+        el.style.display = "";
+      });
+    };
   }, []);
 
   return (
