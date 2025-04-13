@@ -81,7 +81,7 @@ const Despre = () => {
           </p>
           <ul>
             <li>Am impus restricții stricte privind publicitatea la jocuri de noroc de peste un deceniu.</li>
-            <li>Nu acceptăm publicitate sau conținut legat de jocuri de noroc din 2014.</li>
+            <li>Nu acceptăm publicitate sau conținut legat de jocuri de noroc.</li>
             <li>Nu facem trimitere către site-uri de pariuri sau care promovează acest tip de conținut.</li>
             <li>Articolele care conțin excesiv astfel de reclame pot fi eliminate de pe platformă.</li>
           </ul>

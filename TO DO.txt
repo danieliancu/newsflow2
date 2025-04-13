@@ -4,4 +4,4 @@
 - cont cu posibilitatea de a salva setarile de filtru si de a vedea arhiva
 - cuplarea stirilor identice
 - like si comments la stiri
- 
+- de rezlvat formularul din publicitate

@@ -35,12 +35,12 @@ const Network = () => {
         setIsSearching={() => {}}
         setSubmittedSearchTerm={() => {}}
       />
-        <div className="static-page">
+        <div className="static-page answer">
             <h1 className="heading-1">Rețeaua de publicații</h1>
 
             <h2>Publică pe Newsflow România</h2>
-            <p>Mii de editori beneficiază de distribuția linkurilor către articolele lor prin intermediul Newsflow România, ajungând la peste 11 milioane de utilizatori unici în fiecare lună.</p>
-            <p>Publicul nostru este format în mare parte din profesioniști și factori de decizie din România. În fiecare lună, pot fi vizualizate peste o sută de mii de articole. Newsflow promovează o Politică de Conținut Deschis, permițând atât marilor publicații, cât și site-urilor independente sau bloggerilor să își crească vizibilitatea prin includerea în platforma noastră.</p>
+            <p>Mii de editori beneficiază de distribuția linkurilor către articolele lor prin intermediul Newsflow România.</p>
+            <p>Publicul nostru este format în mare parte din profesioniști și factori de decizie din România. În fiecare lună, procesăm peste o sută de mii de articole. Newsflow promovează o Politică de Conținut Deschis, permițând atât marilor publicații, cât și site-urilor independente sau bloggerilor să își crească vizibilitatea prin includerea în platforma noastră.</p>
 
             <h2>Criterii de eligibilitate</h2>
             <p>Pentru a putea fi listat în rețeaua editorială Newsflow, site-ul tău trebuie să dovedească un istoric de conținut de calitate în mod constant, cel puțin în ultimele șase luni.</p>

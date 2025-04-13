@@ -87,15 +87,15 @@ const Publicitate = () => {
                 <div className="form_label">Zone geografice de interes</div>
                 <div className="form_field">
                   <label className="opt">
-                    <input name="Geos" type="checkbox" value="Romania" />
+                    <input className="custom-checkbox custom-checkbox-form" name="Geos" type="checkbox" value="Romania" />
                     România
                   </label>
                   <label className="opt">
-                    <input name="Geos" type="checkbox" value="EU" />
+                    <input className="custom-checkbox custom-checkbox-form" name="Geos" type="checkbox" value="EU" />
                     Uniunea Europeană
                   </label>
                   <label className="opt">
-                    <input name="Geos" type="checkbox" value="Global" />
+                    <input className="custom-checkbox custom-checkbox-form" name="Geos" type="checkbox" value="Global" />
                     Global
                   </label>
                 </div>

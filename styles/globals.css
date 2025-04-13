@@ -180,7 +180,7 @@ a:hover {
   top:-2px;
 }
 
-input, select {
+input, select, textarea {
   background: white !important;
   outline: none;
 }
@@ -195,6 +195,15 @@ input, select {
   cursor: pointer;
   border-radius: 4px; /* Opțional, pentru colțuri rotunjite */
   position: relative;
+}
+
+.custom-checkbox-form {
+  width: 20px !important;
+  height: 20px !important;
+  vertical-align: middle;
+  margin-right: 10px !important;
+  margin-bottom: 10px !important;
+  margin-top: 10px !important;
 }
 
 /* Stil pentru starea "checked" */
@@ -1159,10 +1168,6 @@ button {
   .logo {
     font-size:26px;
     padding-top:2px;
-  }
-  .giphy {
-    width:4.5vw !important;
-    height:4.5vw !important;
   }
 }
 

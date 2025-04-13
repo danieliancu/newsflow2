@@ -155,21 +155,26 @@ const NewsDetail = ({ article, slug }) => {
         <div style={{ display:"flex", justifyContent: "space-between", alignItems: "center" }}>
           <p style={{ border: "1px solid black", display: "inline-block", padding: "10px 15px", borderRadius: "10px", marginTop: "10px" }}>
             <TimeAgo date={article.date} source={article.source} archived={article.isArchived} />
+            <br />
             <a href={article.href} target="_blank" rel="noopener noreferrer">
-              {article.source} <FaExternalLinkAlt style={{ display: "inline-block", verticalAlign: "text-top" }} />
+            <FaExternalLinkAlt style={{ display: "inline-block", verticalAlign: "text-top" }} /> {article.source} 
             </a>
           </p>
-          <div>
+        </div>
+
+
+        <div style={{ marginTop: "20px !important" }}>
             {/* Utilizare next-share în locul react-share */}
             <FacebookShareButton url={`https://newsflow.ro/news/${slug}`} quote={article.text}>
-              <FacebookIcon size={32} style={{ color: "var(--black)", padding:"5px" }} />
+              <FacebookIcon size={50} style={{ color: "var(--black)", padding:"5px" }} />
             </FacebookShareButton>
 
             <TwitterShareButton url={`https://newsflow.ro/news/${slug}`} title={article.text}>
-              <TwitterIcon size={32} style={{ color: "var(--black)", padding:"5px" }} />
+              <TwitterIcon size={50} style={{ color: "var(--black)", padding:"5px" }} />
             </TwitterShareButton>
           </div>          
-        </div>
+
+
       </div>
 
       <Footer />
