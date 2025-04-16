@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 import Menu, { CategoryProvider } from "../../components/Menu";
 import Footer from "@/components/Footer";
 import ReactDOMServer from "react-dom/server"; 
-import { FaArrowLeft, FaExternalLinkAlt } from "react-icons/fa"; 
+import { FaArrowLeft, FaExternalLinkAlt, FaRegClock } from "react-icons/fa"; 
 // Am înlocuit importul din react-share cu cel din next-share
 import { FacebookIcon, FacebookShareButton, TwitterIcon, TwitterShareButton } from "next-share";
 import Link from "next/link";
@@ -27,7 +27,7 @@ const pool = mysql.createPool({
   acquireTimeout: 30000,
 });
 
-const NewsDetail = ({ article, slug }) => {
+const NewsDetail = ({ article, slug, relatedArticles }) => {
   const router = useRouter();
 
   // State-uri pentru funcționalitatea de căutare din Top
@@ -96,6 +96,7 @@ const NewsDetail = ({ article, slug }) => {
         <Head>
           <title>{article.text} | Newsflow</title>
           <meta name="description" content={article.intro || article.text} />
+          <meta name="keywords" content={`${article.cat}, ${article.text.split(" ").slice(0, 10).join(", ")}`} />
           <meta property="og:title" content={article.text} />
           <meta property="og:description" content={article.intro || article.text} />
           <meta property="og:image" content={`https://newsflow.ro${article.imgSrc || "/images/default.png"}`} />
@@ -152,18 +153,17 @@ const NewsDetail = ({ article, slug }) => {
 
         {article.intro && <p className="news-intro">{article.intro}</p>}
         <br /><br />
-        <div style={{ display:"flex", justifyContent: "space-between", alignItems: "center" }}>
-          <p style={{ border: "1px solid black", display: "inline-block", padding: "10px 15px", borderRadius: "10px", marginTop: "10px" }}>
+        <div class="news-details">
+          <p>
+            <FaRegClock class="news-clock" /> 
             <TimeAgo date={article.date} source={article.source} archived={article.isArchived} />
             <br />
-            <a href={article.href} target="_blank" rel="noopener noreferrer">
-            <FaExternalLinkAlt style={{ display: "inline-block", verticalAlign: "text-top" }} /> {article.source} 
-            </a>
+            <a href={article.href} target="_blank" rel="noopener noreferrer"> {article.source} <FaExternalLinkAlt style={{ display: "inline-block", verticalAlign: "text-top" }} /> </a>
           </p>
         </div>
 
 
-        <div style={{ marginTop: "20px !important" }}>
+        <div class="news-social">
             {/* Utilizare next-share în locul react-share */}
             <FacebookShareButton url={`https://newsflow.ro/news/${slug}`} quote={article.text}>
               <FacebookIcon size={50} style={{ color: "var(--black)", padding:"5px" }} />
@@ -173,9 +173,27 @@ const NewsDetail = ({ article, slug }) => {
               <TwitterIcon size={50} style={{ color: "var(--black)", padding:"5px" }} />
             </TwitterShareButton>
           </div>          
-
-
       </div>
+
+
+       {/* Secțiunea „Din aceeași categorie” */}
+       {relatedArticles && relatedArticles.length > 0 && (
+          <div className="related-articles">
+            <div className="related-articles-container">
+            <h2>Din aceeași categorie:  {/* article.cat*/} </h2>
+            <ul className="related-articles-list">
+              {relatedArticles.map((related) => (
+                <li className="related-news" key={related.id}>
+                  <img src = {related.imgSrc} />
+                  <Link href={`/news/${related.text.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${related.id}`}>
+                    {related.text}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            </div>
+          </div>
+        )}      
 
       <Footer />
     </CategoryProvider>
@@ -189,14 +207,14 @@ export async function getServerSideProps({ params }) {
 
   let article = null;
   let isArchived = false;
+  let relatedArticles = [];
 
   try {
-    // Căutare în tabela "articles"
     const [rows] = await pool.query("SELECT * FROM articles WHERE id = ?", [id]);
+
     if (rows && rows.length > 0) {
       article = rows[0];
     } else {
-      // Dacă nu se găsește în "articles", căutăm în tabela "archive"
       const [archiveRows] = await pool.query("SELECT * FROM archive WHERE id = ?", [id]);
       if (archiveRows && archiveRows.length > 0) {
         article = archiveRows[0];
@@ -205,7 +223,6 @@ export async function getServerSideProps({ params }) {
     }
 
     if (!article) {
-      // Nu s-a găsit articolul, returnăm 404
       return { notFound: true };
     }
 
@@ -213,21 +230,22 @@ export async function getServerSideProps({ params }) {
       article.date = article.date.toISOString();
     }
 
-    // Funcție pentru eliminarea diacriticelor (folosită pentru generarea slug-ului)
+    // Încarcă știri suplimentare din aceeași categorie (excluzând articolul curent)
+    const [relatedRows] = await pool.query(
+      "SELECT * FROM articles WHERE cat = ? AND id != ? ORDER BY date DESC LIMIT 10",
+      [article.cat, id]
+    );
+
+    relatedArticles = relatedRows.map((art) => ({
+      ...art,
+      date: art.date.toISOString(),
+    }));
+
     const removeDiacritics = (str) => {
       const diacriticsMap = {
-        "ă": "a",
-        "â": "a",
-        "î": "i",
-        "ș": "s",
-        "ş": "s",
-        "ț": "t",
-        "ţ": "t"
+        "ă": "a", "â": "a", "î": "i", "ș": "s", "ş": "s", "ț": "t", "ţ": "t"
       };
-      return str
-        .split("")
-        .map((char) => diacriticsMap[char] || char)
-        .join("");
+      return str.split("").map((char) => diacriticsMap[char] || char).join("");
     };
 
     const generatedSlug = removeDiacritics(article.text)
@@ -235,13 +253,19 @@ export async function getServerSideProps({ params }) {
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-|-$/g, "");
 
-    // Transmitem flag-ul isArchived împreună cu datele articolului
-    return { props: { article: { ...article, isArchived }, slug: `${generatedSlug}-${article.id}` } };
+    return {
+      props: {
+        article: { ...article, isArchived },
+        slug: `${generatedSlug}-${article.id}`,
+        relatedArticles, // Transmitem articolele suplimentare aici
+      },
+    };
   } catch (error) {
     console.error("Error fetching article:", error);
     return { notFound: true };
   }
 }
+
 
 
 export default NewsDetail;

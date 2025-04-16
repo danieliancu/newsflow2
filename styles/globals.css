@@ -1720,8 +1720,97 @@ button {
     opacity: 1 !important;
  }
 
+ .news-details {
+  display:flex;
+  justify-content: space-between;
+  align-items: center;
+ }
+
+ .news-details > p {
+  border:1px solid black;
+  display: inline-block;
+  padding: 10px 15px; 
+  border-radius: 10px;
+  margin-top: 10px;
+  margin-bottom: 20px !important;
+  width:100%;
+ } 
+
+ .news-details br {
+  display: none;
+ }
+
+ .news-social {
+  margin-top: 20px !important; 
+ }
+
+ .news-social svg rect {
+  border-radius:100%;
+ }
+
+ .related-articles {
+  background: white;
+  padding: 40px;
+ }
+
+ .related-articles h2 {
+  font-size: 24px;
+  font-weight: bold
+ }
+
+ .related-articles-container {
+
+ }
+ 
+ .related-articles-list {
+  position: relative;
+  display: flex;
+  overflow-y: auto;
+  height: 350px;
+  gap: 20px;
+  padding: 20px 0;
+ }
+
+ .related-news {
+  min-width: 350px;
+  border: 2px solid lightgrey;
+  padding: 20px;
+  border-radius: 10px;
+  font-weight:bold;
+  line-height:25px;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 5;         /* limita la 3 rânduri */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+ }
+
+ .related-news img {
+  height:150px;
+  width: 100%;
+  object-fit: cover;
+ }
+
+ .related-news > span {
+  display: block;
+  border:1px solid red;
+  width:100%;
+ }
+
+.news-clock {
+    float:left;
+    margin-right: 10px !important;
+    margin-top: 2px !important;
+}
 
  @media only screen and (max-width: 767px) {
+
+  .related-news {
+    min-width: 250px;
+  }
+
   .news-detail-container h1 {
     font-size: 24px;
   }
