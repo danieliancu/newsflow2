@@ -47,11 +47,10 @@ function scrollReducer(state, action) {
 const App = () => {
   const router = useRouter();
 
-  useEffect(() => {
-    if (router.isReady && router.query.category) {
-      setSelectedCategory(router.query.category);
-    }
-  }, [router.isReady, router.query.category]);
+
+
+
+  
 
   // Reduceri pentru paginare și scroll
   const [paginationState, dispatchPagination] = useReducer(
@@ -91,6 +90,99 @@ const App = () => {
   const [currentPage, setCurrentPage] = useState(
     paginationState[selectedCategory] || 1
   );
+
+  useEffect(() => {
+    if (!router.isReady) return;
+  
+    const { category, label, addLabel } = router.query;
+  
+    if (category) {
+      setSelectedCategory(category);
+    }
+  
+    if (label) {
+      // Suprascrie complet labelFilters (comportament vechi, ex: acces direct din URL)
+      setFiltersByCategory((prev) => ({
+        ...prev,
+        [category]: {
+          sourceFilters: prev[category]?.sourceFilters || [],
+          labelFilters: [label],
+        },
+      }));
+  
+      setSubmenuSourceFilters([]);
+      setSubmenuLabelFilters([label]);
+  
+      dispatchPagination({
+        type: "SET_PAGE",
+        category,
+        page: 1,
+      });
+    }
+  
+    if (addLabel) {
+      setFiltersByCategory((prev) => {
+        const current = prev[category] || {
+          sourceFilters: [],
+          labelFilters: [],
+        };
+  
+        const updatedLabels = Array.from(new Set([...current.labelFilters, addLabel]));
+  
+        return {
+          ...prev,
+          [category]: {
+            ...current,
+            labelFilters: updatedLabels,
+          },
+        };
+      });
+  
+      setSubmenuLabelFilters((prev) => {
+        if (prev.includes(addLabel)) return prev;
+        return [...prev, addLabel];
+      });
+  
+      dispatchPagination({
+        type: "SET_PAGE",
+        category,
+        page: 1,
+      });
+    }
+  }, [router.isReady, router.query]);
+  
+
+
+  useEffect(() => {
+    if (router.isReady) {
+      const { category, label } = router.query;
+  
+      if (category) {
+        setSelectedCategory(category);
+      }
+  
+      if (label) {
+        setFiltersByCategory((prev) => ({
+          ...prev,
+          [category]: {
+            sourceFilters: prev[category]?.sourceFilters || [],
+            labelFilters: [label],
+          },
+        }));
+  
+        setSubmenuSourceFilters([]);
+        setSubmenuLabelFilters([label]);
+  
+        dispatchPagination({
+          type: "SET_PAGE",
+          category: category,
+          page: 1,
+        });
+      }
+    }
+  }, [router.isReady, router.query]);
+  
+
 
   // Fetch date la încărcare
   useEffect(() => {

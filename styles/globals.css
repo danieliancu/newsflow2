@@ -1685,9 +1685,22 @@ button {
 /*  pagina news  */
 
 .news-detail-container {
-  max-width: 800px;
+  max-width: 1200px;
   margin: auto !important;
   padding: 40px;
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+
+.news-detail-container-side {
+}
+
+.news-detail-container > div:nth-child(2) {
+  padding:0 20px;
+  border-left: 1px solid black;
+  border-right: 1px solid black;
+  margin:0 10px !important;
 }
 
 .news-detail-container .label {
@@ -1726,27 +1739,37 @@ button {
   align-items: center;
  }
 
+ .news-details .bumb {
+  display: none;
+ }
+
  .news-details > p {
-  border:1px solid black;
   display: inline-block;
   padding: 10px 15px; 
-  border-radius: 10px;
   margin-top: 10px;
   margin-bottom: 20px !important;
   width:100%;
- } 
 
+ } 
+.news-details > p > span {
+  border-bottom: 1px solid grey;
+  width:100%;
+  display: inline-block;
+  padding: 20px 0;
+}
  .news-details br {
   display: none;
  }
 
  .news-social {
-  margin-top: 20px !important; 
+  padding:0 10px;
  }
 
  .news-social svg rect {
   border-radius:100%;
  }
+
+
 
  .related-articles {
   background: white;
@@ -1754,8 +1777,10 @@ button {
  }
 
  .related-articles h2 {
-  font-size: 24px;
-  font-weight: bold
+  font-size: 18px;
+  font-weight: 900;
+  color: red;
+  text-transform: uppercase;
  }
 
  .related-articles-container {
@@ -1766,31 +1791,36 @@ button {
   position: relative;
   display: flex;
   overflow-y: auto;
-  height: 350px;
+  height: 420px;
   gap: 20px;
-  padding: 20px 0;
+  padding: 10px 0;
  }
 
  .related-news {
   min-width: 350px;
-  border: 2px solid lightgrey;
-  padding: 20px;
+  padding: 10px 20px 10px 0;
   border-radius: 10px;
   font-weight:bold;
   line-height:25px;
 
-  display: -webkit-box;
-  -webkit-line-clamp: 5;         /* limita la 3 rânduri */
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
 
  }
 
+ .related-news a {
+  display: inline-block;
+  height: 80px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;         /* limita la 3 rânduri */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+ }
+
  .related-news img {
-  height:150px;
+  height:250px;
   width: 100%;
   object-fit: cover;
+  border-radius:10px;
  }
 
  .related-news > span {
@@ -1805,15 +1835,66 @@ button {
     margin-top: 2px !important;
 }
 
+.related-label {
+  color:grey;
+  font-size:14px;
+  font-weight: 400;
+  margin:10px 0 !important
+}
+
+.category-labels {
+  font-size:12px;
+}
+
+.category-labels li {
+  display: inline-block;
+  margin:3px !important;
+}
+
+.news-social button {
+  margin-right: 10px !important;
+}
+
  @media only screen and (max-width: 767px) {
 
+
+  .news-detail-container {
+    flex-direction: column;
+  }
+
+  .news-detail-container > div:first-child {
+    display: none !important;
+  }
+
+  .news-detail-container > div:nth-child(2) {
+    padding:0;
+    border-left: none;
+    border-right: none;
+    margin:0 !important;
+    border-bottom:1px solid black;
+    padding-bottom: 20px;
+  }
+
+  .news-details > p,
+  .news-social
+  {
+    padding: 0;
+  }
+
+
   .related-news {
-    min-width: 250px;
+    min-width: 300px;
   }
 
   .news-detail-container h1 {
     font-size: 24px;
   }
+
+  .related-articles {
+    padding: 40px 10px;
+   }
+  
+
  }
 
 

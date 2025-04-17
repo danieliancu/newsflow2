@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <title>Plan de implementare NewsFlow.ro</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+  <div class="container mx-auto px-6 py-8 space-y-12">
+
+    <!-- Faza 1 -->
+    <section>
+      <h2 class="text-2xl font-bold mb-4">Faza 1 (Luna 1) – Fundament &amp; Engagement de bază</h2>
+      <div class="overflow-x-auto">
+        <table class="table-fixed w-full border border-gray-200 bg-white">
+          <thead>
+            <tr class="bg-gray-100">
+              <th class="w-[20%] border-gray-200 border px-4 py-2 text-left font-medium">Task</th>
+              <th class="w-[20%] border-gray-200 border px-4 py-2 text-left font-medium">Descriere</th>
+              <th class="w-[20%] border-gray-200 border px-4 py-2 text-left font-medium">Responsabil</th>
+              <th class="w-[20%] border-gray-200 border px-4 py-2 text-left font-medium">Deadline</th>
+              <th class="w-[20%] border-gray-200 border px-4 py-2 text-left font-medium">KPI principal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- 1: Conturi & Bookmark-uri (login prerequisite) -->
+            <tr class="even:bg-gray-50">
+              <td class="border-gray-200 border px-4 py-2">Conturi &amp; Bookmark-uri</td>
+              <td class="border-gray-200 border px-4 py-2">
+                • Sistem de autentificare (signup/login via email)<br>
+                • Stocare preferințe publicații/etichete<br>
+                • Pagină „My NewsFlow”: articole salvate + history
+              </td>
+              <td class="border-gray-200 border px-4 py-2">Dev Full‑stack</td>
+              <td class="border-gray-200 border px-4 py-2">Săptămâna 2</td>
+              <td class="border-gray-200 border px-4 py-2">≥ 30% utilizatori logați</td>
+            </tr>
+            <!-- 2: Digest Personalizat & Email‑Digest -->
+            <tr class="even:bg-gray-50">
+              <td class="border-gray-200 border px-4 py-2">Digest Personalizat &amp; Email‑Digest</td>
+              <td class="border-gray-200 border px-4 py-2">
+                • (Necesită autentificare)<br>
+                • Formular abonare cu selecție publicații și etichete<br>
+                • Backend: cron la 10’ → agregare → AI summary<br>
+                • Trigger: „Rezumat prânz” (12:00) și „Rezumat seară” (18:00)
+              </td>
+              <td class="border-gray-200 border px-4 py-2">Dev Full‑stack</td>
+              <td class="border-gray-200 border px-4 py-2">Săptămâna 3</td>
+              <td class="border-gray-200 border px-4 py-2">≥ 200 înscrieri</td>
+            </tr>
+            <!-- 3: Notificări Browser -->
+            <tr class="even:bg-gray-50">
+              <td class="border-gray-200 border px-4 py-2">Notificări Browser (Opțional)</td>
+              <td class="border-gray-200 border px-4 py-2">
+                • Integrare Web Push (OneSignal / Firebase)<br>
+                • Push la știri „breaking” pe etichete setate
+              </td>
+              <td class="border-gray-200 border px-4 py-2">Dev Front‑end</td>
+              <td class="border-gray-200 border px-4 py-2">Săptămâna 4</td>
+              <td class="border-gray-200 border px-4 py-2">CTR ≥ 10%</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Faza 2 -->
+    <section>
+      <h2 class="text-2xl font-bold mb-4">Faza 2 (Luna 2–3) – Personalizare Avansată &amp; Gamification</h2>
+      <div class="overflow-x-auto">
+        <table class="table-fixed w-full border border-gray-200 bg-white">
+          <thead>
+            <tr class="bg-gray-100">
+              <th class="w-[20%] border-gray-200 border px-4 py-2 text-left font-medium">Task</th>
+              <th class="w-[20%] border-gray-200 border px-4 py-2 text-left font-medium">Descriere</th>
+              <th class="w-[20%] border-gray-200 border px-4 py-2 text-left font-medium">Responsabil</th>
+              <th class="w-[20%] border-gray-200 border px-4 py-2 text-left font-medium">Deadline</th>
+              <th class="w-[20%] border-gray-200 border px-4 py-2 text-left font-medium">KPI principal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="even:bg-gray-50">
+              <td class="border-gray-200 border px-4 py-2">Recomandări AI Proactive</td>
+              <td class="border-gray-200 border px-4 py-2">
+                • Analiză comportament (clicks, time on page)<br>
+                • Algoritm TF‑IDF + taguri<br>
+                • Secțiune “Pentru tine” pe homepage
+              </td>
+              <td class="border-gray-200 border px-4 py-2">Dev AI / Full‑stack</td>
+              <td class="border-gray-200 border px-4 py-2">Sfârșit Lună 2</td>
+              <td class="border-gray-200 border px-4 py-2">Engagement ≥ 20%</td>
+            </tr>
+            <tr class="even:bg-gray-50">
+              <td class="border-gray-200 border px-4 py-2">Gamification</td>
+              <td class="border-gray-200 border px-4 py-2">
+                • Badge-uri pentru milestone-uri<br>
+                • UI badge-uri în profil<br>
+                • Email automat de felicitare
+              </td>
+              <td class="border-gray-200 border px-4 py-2">Dev Front‑end &amp; UX</td>
+              <td class="border-gray-200 border px-4 py-2">Sfârșit Lună 3</td>
+              <td class="border-gray-200 border px-4 py-2">≥ 500 badge-uri</td>
+            </tr>
+            <tr class="even:bg-gray-50">
+              <td class="border-gray-200 border px-4 py-2">Social Share &amp; Comentarii</td>
+              <td class="border-gray-200 border px-4 py-2">
+                • Share Facebook/LinkedIn/Telegram<br>
+                • Comentarii la nivel de articol
+              </td>
+              <td class="border-gray-200 border px-4 py-2">Dev Full‑stack</td>
+              <td class="border-gray-200 border px-4 py-2">Sfârșit Lună 3</td>
+              <td class="border-gray-200 border px-4 py-2">≥ 200 share-uri/lună</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Faza 3 -->
+    <section>
+      <h2 class="text-2xl font-bold mb-4">Faza 3 (Luna 4–6) – Voice, Mobile &amp; Scalare</h2>
+      <div class="overflow-x-auto">
+        <table class="table-fixed w-full border border-gray-200 bg-white">
+          <thead>
+            <tr class="bg-gray-100">
+              <th class="w-[20%] border-gray-200 border px-4 py-2 text-left font-medium">Task</th>
+              <th class="w-[20%] border-gray-200 border px-4 py-2 text-left font-medium">Descriere</th>
+              <th class="w-[20%] border-gray-200 border px-4 py-2 text-left font-medium">Responsabil</th>
+              <th class="w-[20%] border-gray-200 border px-4 py-2 text-left font-medium">Deadline</th>
+              <th class="w-[20%] border-gray-200 border px-4 py-2 text-left font-medium">KPI principal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="even:bg-gray-50">
+              <td class="border-gray-200 border px-4 py-2">Text → Voice Summaries (Beta)</td>
+              <td class="border-gray-200 border px-4 py-2">
+                • Integrare TTS (Google/Azure/OpenAI)<br>
+                • Player audio pe web + link în digest
+              </td>
+              <td class="border-gray-200 border px-4 py-2">Dev AI &amp; DevOps</td>
+              <td class="border-gray-200 border px-4 py-2">Luna 4</td>
+              <td class="border-gray-200 border px-4 py-2">≥ 1 000 ascultări</td>
+            </tr>
+            <tr class="even:bg-gray-50">
+              <td class="border-gray-200 border px-4 py-2">Mobile App Lite</td>
+              <td class="border-gray-200 border px-4 py-2">
+                • Wrapper WebView + notificări native<br>
+                • Login &amp; „My NewsFlow”
+              </td>
+              <td class="border-gray-200 border px-4 py-2">Dev Mobile (RN)</td>
+              <td class="border-gray-200 border px-4 py-2">Luna 5</td>
+              <td class="border-gray-200 border px-4 py-2">≥ 500 descărcări</td>
+            </tr>
+            <tr class="even:bg-gray-50">
+              <td class="border-gray-200 border px-4 py-2">Scalare &amp; Monitorizare</td>
+              <td class="border-gray-200 border px-4 py-2">
+                • Serverless cron/Lambda<br>
+                • Logging + alertare uptime/erori AI
+              </td>
+              <td class="border-gray-200 border px-4 py-2">DevOps</td>
+              <td class="border-gray-200 border px-4 py-2">Luna 6</td>
+              <td class="border-gray-200 border px-4 py-2">AI <1 s răspuns 99%</td>
+            </tr>
+            <tr class="even:bg-gray-50">
+              <td class="border-gray-200 border px-4 py-2">Campanie Marketing &amp; Parteneriate</td>
+              <td class="border-gray-200 border px-4 py-2">
+                • Ads Google &amp; LinkedIn (25–45 ani)<br>
+                • Colaborări cu bloguri economice/agricultură
+              </td>
+              <td class="border-gray-200 border px-4 py-2">Marketing Manager</td>
+              <td class="border-gray-200 border px-4 py-2">Luna 6</td>
+              <td class="border-gray-200 border px-4 py-2">CAC ≤ 10 € / RR ≥ 2 €</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </div>
+</body>
+</html>
