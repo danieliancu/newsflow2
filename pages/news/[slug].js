@@ -31,6 +31,28 @@ const NewsDetail = ({ article, slug, relatedArticles, categoryLabels }) => {
   const [isSearching, setIsSearching] = useState(false);
   const [submittedSearchTerm, setSubmittedSearchTerm] = useState("");
 
+
+    // detect mobile vs desktop for inline / inline-block
+    /*
+    const [isMobile, setIsMobile] = useState(
+      typeof window !== "undefined" && window.innerWidth < 767
+    );
+    useEffect(() => {
+      const handleResize = () => {
+        setIsMobile(window.innerWidth < 767);
+      };
+      window.addEventListener("resize", handleResize);
+      return () => {
+        window.removeEventListener("resize", handleResize);
+      };
+    }, []);
+    */
+    // verifica daca articolul e mai vechi de 24h
+    const isOlderThan24h =
+      Date.now() - new Date(article.date).getTime() >
+      24 * 60 * 60 * 1000;
+
+
   // Acum primește și label, opțional
   const handleCategoryFilter = (category, label) => {
     const query = { category };
@@ -61,12 +83,11 @@ const NewsDetail = ({ article, slug, relatedArticles, categoryLabels }) => {
       <div className="news-detail-container">
         <Head>
           <title>{`${article.text} | Newsflow`}</title>
-          {/* … restul meta-tag-urilor … */}
         </Head>
 
         {/* Coloană laterală cu etichete */}
         <div className="news-detail-container-side" style={{ flex: 3 }}>
-          <h3>Etichete din categoria „{article.cat}”</h3>
+          <h3>Alege o etichetă din <br /> <span style={{ textTransform:"uppercase" }}>{article.cat}</span></h3>
           <ul className="category-labels">
             {categoryLabels.map((label, idx) => (
               <li key={idx}>
@@ -96,16 +117,34 @@ const NewsDetail = ({ article, slug, relatedArticles, categoryLabels }) => {
         </div>
 
         {/* Coloană laterală cu detalii și share */}
-        <div className="news-detail-container-side" style={{ flex: 3 }}>
+        <div
+          className="news-detail-container-side"
+          style={{ flex: 3 }}
+        >
           <div className="news-details">
             <p>
               <span>
+                <strong>{article.label}</strong>
+              </span>
+              <span>
                 <FaRegClock className="news-clock" />
+                <span
+                  style={{
+                    // display: isMobile ? "inline" : "inline-block",
+                    margin: 0,
+                  }}
+                >
+                  {isOlderThan24h
+                    ? "Publicat la data de:"
+                    : "Publicat acum "}
+                </span>
+                <span style={{ textTransform:"lowercase", paddingLeft: "3px" }}>
                 <TimeAgo
                   date={article.date}
                   source={article.source}
                   archived={article.isArchived}
                 />
+                </span>
               </span>
               <span>
                 <a
@@ -114,11 +153,16 @@ const NewsDetail = ({ article, slug, relatedArticles, categoryLabels }) => {
                   rel="noopener noreferrer"
                 >
                   <FaExternalLinkAlt
-                    style={{ display: "inline-block", verticalAlign: "text-top" }}
+                    style={{
+                      display: "inline-block",
+                      verticalAlign: "text-top"
+                    }}
                   />{" "}
-                  {article.source}
+                  <span style={{ paddingLeft:"5px"}}>Citește știrea pe{" "}</span>
+                  <strong>{article.source}</strong>
                 </a>
               </span>
+              
             </p>
           </div>
 
