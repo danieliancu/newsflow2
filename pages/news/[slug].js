@@ -32,21 +32,7 @@ const NewsDetail = ({ article, slug, relatedArticles, categoryLabels }) => {
   const [submittedSearchTerm, setSubmittedSearchTerm] = useState("");
 
 
-    // detect mobile vs desktop for inline / inline-block
-    /*
-    const [isMobile, setIsMobile] = useState(
-      typeof window !== "undefined" && window.innerWidth < 767
-    );
-    useEffect(() => {
-      const handleResize = () => {
-        setIsMobile(window.innerWidth < 767);
-      };
-      window.addEventListener("resize", handleResize);
-      return () => {
-        window.removeEventListener("resize", handleResize);
-      };
-    }, []);
-    */
+
     // verifica daca articolul e mai vechi de 24h
     const isOlderThan24h =
       Date.now() - new Date(article.date).getTime() >
@@ -130,13 +116,12 @@ const NewsDetail = ({ article, slug, relatedArticles, categoryLabels }) => {
                 <FaRegClock className="news-clock" />
                 <span
                   style={{
-                    // display: isMobile ? "inline" : "inline-block",
                     margin: 0,
                   }}
                 >
                   {isOlderThan24h
-                    ? "Publicat la data de:"
-                    : "Publicat acum "}
+                    ? "Publicat la data de"
+                    : "Publicat "}
                 </span>
                 <span style={{ textTransform:"lowercase", paddingLeft: "3px" }}>
                 <TimeAgo
