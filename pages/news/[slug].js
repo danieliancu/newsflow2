@@ -123,7 +123,7 @@ const NewsDetail = ({ article, slug, relatedArticles, categoryLabels }) => {
                     ? "Publicat la data de"
                     : "Publicat "}
                 </span>
-                <span style={{ textTransform:"lowercase", paddingLeft: "3px" }}>
+                <span style={{ textTransform:"lowercase", paddingLeft: "2px" }}>
                 <TimeAgo
                   date={article.date}
                   source={article.source}

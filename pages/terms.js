@@ -49,7 +49,7 @@ const Terms = () => {
         <p>Nu garantăm că site-ul sau conținutul acestuia va fi disponibil în mod continuu sau fără întreruperi.</p>
 
         <h2>3. Drepturi de proprietate intelectuală</h2>
-        <p>Tot conținutul de pe www.newsflow.ro (texte, imagini, logo-uri, grafică, cod sursă) este protejat prin legislația privind drepturile de autor și aparține Green Horizon Concepts SRL sau partenerilor săi. Utilizarea neautorizată a acestuia este strict interzisă.</p>
+        <p>Tot conținutul de pe www.newsflow.ro (texte, imagini) este protejat prin legislația privind drepturile de autor și nu aparține Green Horizon Concepts SRL. Utilizarea neautorizată este strict interzisă.</p>
         <p>Nu ai dreptul să copiezi, distribui, modifici sau reproduci conținutul fără acordul scris al deținătorului de drepturi.</p>
 
         <h2>4. Conturi de utilizator</h2>
